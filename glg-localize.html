@@ -1,0 +1,53 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../iron-icons/editor-icons.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../app-localize-behavior/app-localize-behavior.html">
+
+<dom-module id="glg-localize">
+  <template>
+    <iron-ajax
+      id="langLocalization"
+      with-credentials
+      verbose
+      method="get"
+      handle-as="json"
+      url="[[langLocalizationUrl]]"
+      on-request="_startLocalizationSpinner"
+      on-response="_setLocalizedResources"
+      on-error="_fireLocalizationError"
+    >
+    </iron-ajax>
+    <paper-menu-button horizontal-offset="-25">
+      <paper-icon-button icon="language" class="dropdown-trigger"></paper-icon-button>
+      <paper-menu on-iron-select="selectLanguage" class="dropdown-content">
+        <paper-item value='en'>English</paper-item>
+        <paper-item value='fr'>Français</paper-item>
+        <paper-item value='de'>Deutsch</paper-item>
+        <paper-item value='es'>Español</paper-item>
+        <paper-item value='pt'>Português</paper-item>
+        <paper-item value='zh'>中文（简体中文)</paper-item>
+        <paper-item value='jp'>日本語</paper-item>
+      </paper-menu>
+    </paper-menu-button>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'glg-localize',
+    properties: {
+      deleteParams: {
+        type: Object,
+        value: function () { return {} },
+        computed: "_getDeleteParams(isImpersonator,cmId,invoiceId,loggedInPersonId)"
+      }
+    },
+    _getDefaultCmInvoiceHistory: function() {
+      return {
+        invoices: [],
+        payments: []
+      }
+    }
+  });
+</script>
