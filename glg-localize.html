@@ -36,18 +36,70 @@
 <script>
   Polymer({
     is: 'glg-localize',
+    behaviors: [
+      Polymer.AppLocalizeBehavior
+    ],
     properties: {
       deleteParams: {
         type: Object,
         value: function () { return {} },
         computed: "_getDeleteParams(isImpersonator,cmId,invoiceId,loggedInPersonId)"
+      },
+      langLocalizationUrl: {
+        type: 'String',
+        value: null,
+        observer: '_fetchLangLocalization',
+        computed: '_setLangLocalizationUrl(language)'
+      },
+      language: {
+        type: 'String',
+        value: 'en'
+      },
+      resources: {
+        type: 'Object',
+        value: function() {
+          return {
+            "de": null,   // german
+            "en": null,   // english
+            "es": null,   // spanish
+            "fr": null,   // french
+            "jp": null,   // japanese
+            "ko": null,   // korean
+            "pt": null,   // portuguese
+            "zh": null    // chinese
+          }
+        }
       }
     },
-    _getDefaultCmInvoiceHistory: function() {
-      return {
-        invoices: [],
-        payments: []
+    observers: [
+      "_storeLangPref(language)"
+    ],
+    ready: function() {
+      // try to load preferred language code from local storage
+      this.language = window.localStorage.getItem("languagePreference") || window.navigator.userLanguage || window.navigator.language;
+    },
+    _fetchLangLocalization: function () {
+      if (this.langLocalizationUrl && this.language && !this.resources[this.language]) this.$.langLocalization.generateRequest();
+    },
+    _storeLangPref: function (langCode) {
+      // save preferred language code to local storage
+    },
+    _setLangLocalizationUrl: function (langCode) {
+      return "//public/locales/" + langCode + ".json"
+    },
+    _startLocalizationSpinner: function (evt) {
+    },
+    _setLocalizedResources: function (evt) {
+      if (event.detail.response) {
+        try {
+          this.resources[this.language] = JSON.parse(event.detail.response);
+        }
+        catch (error) {
+          console.warn("Unable to set language resources object from for " + this.language + ".  " + error);
+        }
       }
+    },
+    _fireLocalizationError: function (evt) {
     }
   });
 </script>
