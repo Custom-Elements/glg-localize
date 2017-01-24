@@ -23,6 +23,20 @@ For example,
   </glg-localize>
 ```
 
+You should also tell glg-localize which languages you wish to support
+using the `supportedLanguages` property.  This is a comma delimited
+string with pairs of values of the form language-code : language-display-name
+
+For example,
+
+```html
+  <glg-localize
+    menu-offset="-10"
+    supported-languages="de:Deutsch,en:English,es:Español,fr:Français,jp:日本語,ko:한국어,pt:Português,zh:中文（简体中文)"
+  >
+  </glg-localize>
+```
+
 #### Text Translation
 See documentation here:
 https://github.com/PolymerElements/app-localize-behavior
