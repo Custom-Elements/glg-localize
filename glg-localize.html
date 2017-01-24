@@ -42,11 +42,6 @@
         value: ''
       }
     },
-    attached: function() {
-      var myNameArray = this.resolveUrl().split("/");
-      var myName = myNameArray[myNameArray.length - 2];
-      this.loadResources(myName + ".json");
-    },
     ready: function() {
       // try to load preferred language code from local storage
       this.language = window.localStorage.getItem("languagePreference") || (window.navigator.userLanguage || window.navigator.language).split("-")[0];
