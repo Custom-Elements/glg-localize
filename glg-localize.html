@@ -8,7 +8,7 @@
     <paper-menu-button horizontal-offset="[[menuOffset]]">
       <paper-icon-button icon="language" class="dropdown-trigger glg-localize-label"></paper-icon-button>
       <content select=".dropdown-trigger"></content>
-      <paper-menu id="languageMenu" selected="{{language}}" attr-for-selected="id" class="dropdown-content">
+      <paper-menu id="languageMenu" selected="{{selectedLanguage}}" attr-for-selected="id" class="dropdown-content" on-iron-select="_setLanguageToSelected">
         <template is="dom-repeat" items="{{supportedLanguagesArray}}" as="lang">
           <paper-item id="[[lang.code]]" label="[[lang.displayName]]">
             <span>[[lang.displayName]]</span>
@@ -26,7 +26,20 @@
         type: 'String',
         value: 'en',
         notify: true,
-        observer: '_storeLangPref'
+        readOnly: true
+      },
+      menuOffset: {
+        type: 'String',
+        value: ''
+      },
+      preferredLanguage: {
+        type: 'String',
+        value: function () {return window.localStorage.getItem("languagePreference")}
+      },
+      selectedLanguage: {
+        type: 'String',
+        value: null,
+        notify: true
       },
       supportedLanguagesArray: {
         type: 'Array',
@@ -36,15 +49,19 @@
         type: 'String',
         value: "", // should be of the form "<lang_code1> : <display_name1>, <lang_code2> : <display_name2>, ..."
         observer: "_parseToArray"
-      },
-      menuOffset: {
-        type: 'String',
-        value: ''
       }
     },
+    observers: [
+      '_storeLangPref(preferredLanguage, selectedLanguage)'
+    ],
     ready: function() {
       // try to load preferred language code from local storage
-      this.language = window.localStorage.getItem("languagePreference") || (window.navigator.userLanguage || window.navigator.language).split("-")[0];
+      var browserLang = (window.navigator.userLanguage || window.navigator.language).split("-")[0];
+      if (this.preferredLanguage) {
+        this.selectedLanguage = this.preferredLanguage;
+      } else if (browserLang) {
+        this.selectedLanguage = browserLang;
+      }
     },
     _parseToArray: function (newLangs, oldLangs) {
       if (newLangs && newLangs !== oldLangs) {
@@ -54,9 +71,15 @@
         }, this);
       }
     },
-    _storeLangPref: function (newLangCode, oldLangCode) {
-      // save preferred language code to local storage
-      if (newLangCode && newLangCode !== oldLangCode) window.localStorage.setItem("languagePreference", newLangCode);
+    // because this.language has readOnly=true, this function MUST be of the form '_set' + property name
+    _setLanguageToSelected: function (event) {
+      this._setLanguage(event.detail.item.id);
+    },
+    _storeLangPref: function (prefLangCode, selectedLangCode) {
+      // save selectedLangCode as preferred language to local storage
+      if (selectedLangCode && selectedLangCode !== prefLangCode) {
+        window.localStorage.setItem("languagePreference", selectedLangCode);
+      }
     }
   });
 </script>
