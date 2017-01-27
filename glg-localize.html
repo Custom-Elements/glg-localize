@@ -5,7 +5,12 @@
 
 <dom-module id="glg-localize">
   <template>
-    <paper-menu-button horizontal-offset="[[menuOffset]]">
+    <paper-menu-button
+      horizontal-align="[[menuHorizontalAlign]]"
+      horizontal-offset="[[menuHorizontalOffset]]"
+      vertical-align="[[menuVerticalAlign]]"
+      vertical-offset="[[menuVerticalOffset]]"
+    >
       <paper-icon-button icon="language" class="dropdown-trigger glg-localize-label"></paper-icon-button>
       <content select=".dropdown-trigger"></content>
       <paper-menu id="languageMenu" selected="{{selectedLanguage}}" attr-for-selected="id" class="dropdown-content" on-iron-select="_setLanguageToSelected">
@@ -16,6 +21,13 @@
         </template>
       </paper-menu>
     </paper-menu-button>
+    <style>
+      paper-icon-button {
+        --paper-icon-button: {
+          @apply(--language-menu-button);
+        }
+      }
+    </style>
   </template>
 </dom-module>
 <script>
@@ -28,9 +40,17 @@
         notify: true,
         readOnly: true
       },
-      menuOffset: {
-        type: 'String',
-        value: ''
+      menuHorizontalAlign: {
+        type: 'String' // left or right
+      },
+      menuHorizontalOffset: {
+        type: 'Number'
+      },
+      menuVerticalAlign: {
+        type: 'String' // top or bottom
+      },
+      menuVerticalOffset: {
+        type: 'Number'
       },
       preferredLanguage: {
         type: 'String',
