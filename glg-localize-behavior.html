@@ -1,0 +1,45 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<script>
+GlgLocalizeBehavior = {
+  properties: {
+    /**
+     * The dictionary of localized messages, for each of the languages that
+     * are going to be used.
+     *
+     * For example, a valid dictionary would be:
+     * this.resources = {
+     *  'en': { 'greeting': 'Hello!' }, 'fr' : { 'greeting': 'Bonjour!' }
+     * }
+     */
+    resources: {
+      type: Object
+    },
+
+    /**
+     * Translates a string to the `language`.
+     * `localize(stringKey, language)`
+     */
+    localize: {
+      type: Function,
+      computed: '__computeLocalize(resources)'
+    }
+  },
+
+  /**
+   * Returns a computed `localize` method, based on the current `resources`.
+   */
+  __computeLocalize: function(resources) {
+    return function(key, language) {
+      if (!key || !resources || !language || !resources[language])
+        return;
+
+      var translatedValue = resources[language][key];
+
+      return translatedValue || "";
+    };
+  },
+
+}
+
+</script>
