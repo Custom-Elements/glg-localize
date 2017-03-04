@@ -8,6 +8,18 @@
 
 <dom-module id="glg-localize">
   <template>
+    <iron-ajax
+      id="glgCmLanguage"
+      auto
+      with-credentials
+      verbose
+      method="get"
+      handle-as="json"
+      url="[[epiHost]][[epiInstance]]/epiquery1/glglive/cm/getCmLanguage.mustache"
+      on-response="_setGlgPersonLanguage"
+    >
+    </iron-ajax>
+
     <paper-menu-button
       horizontal-align="[[menuHorizontalAlign]]"
       horizontal-offset="[[menuHorizontalOffset]]"
@@ -37,6 +49,22 @@
   Polymer({
     is: 'glg-localize',
     properties: {
+      browserLanguage: {
+        type: 'String',
+        value: null
+      },
+      cmId: {
+        type: Number,
+        value: null
+      },
+      epiHost: {
+        type: String,
+        value: document.defaultView.location.protocol + '//' + document.defaultView.location.hostname + '/'
+      },
+      epiInstance: {
+        type: 'String',
+        value: null
+      },
       language: {
         type: 'String',
         value: 'en',
@@ -54,6 +82,10 @@
       },
       menuVerticalOffset: {
         type: 'Number'
+      },
+      glgPersonLanguage: {
+        type: 'String',
+        value: null
       },
       preferredLanguage: {
         type: 'String',
@@ -76,15 +108,11 @@
     },
     observers: [
       '_storeLangPref(preferredLanguage, selectedLanguage)'
+      ,'_setSelectedLanguage(preferredLanguage, browserLang, glgPersonLanguage, supportedLanguagesArray)'
     ],
     ready: function() {
       // try to load preferred language code from local storage
-      var browserLang = (window.navigator.userLanguage || window.navigator.language).split("-")[0];
-      if (this.preferredLanguage) {
-        this.selectedLanguage = this.preferredLanguage;
-      } else if (browserLang) {
-        this.selectedLanguage = browserLang;
-      }
+      this.browserLang = (window.navigator.userLanguage || window.navigator.language).split("-")[0];
     },
     _parseToArray: function (newLangs, oldLangs) {
       if (newLangs && newLangs !== oldLangs) {
@@ -97,6 +125,19 @@
     // because this.language has readOnly=true, this function MUST be of the form '_set' + property name
     _setLanguageToSelected: function (event) {
       this._setLanguage(event.detail.item.id);
+    },
+    _setGlgPersonLanguage: function (evt) {
+      var response = evt.detail.response
+      if (response && Array.isArray(response) && response.length > 0 && response[0].langCode) this.glgPersonLanguage = response[0].langCode;
+    },
+    _setSelectedLanguage: function (preferredLanguage, browserLang, glgPersonLanguage, supportedLanguages) {
+      if (preferredLanguage) {
+        this.selectedLanguage = preferredLanguage;
+      } else if (glgPersonLanguage && supportedLanguages.map(function(o) { return o.code } ).indexOf(glgPersonLanguage) > -1) {
+        this.selectedLanguage = glgPersonLanguage;
+      } else if (browserLang) {
+        this.selectedLanguage = browserLang;
+      }
     },
     _storeLangPref: function (prefLangCode, selectedLangCode) {
       // save selectedLangCode as preferred language to local storage
