@@ -23,6 +23,10 @@ GlgLocalizeBehavior = {
     localize: {
       type: Function,
       computed: '__computeLocalize(resources)'
+    },
+    defaultLanguage: {
+      type: String,
+      value: "en"
     }
   },
 
@@ -31,8 +35,10 @@ GlgLocalizeBehavior = {
    */
   __computeLocalize: function(resources) {
     return function(key, language) {
-      if (!key || !resources || !language || !resources[language])
-        return;
+      if (!key || !resources || !language) return;
+      if (!resources[language] && !this.defaultLanguage) return;
+      if (!resources[language] && this.defaultLanguage) language = this.defaultLanguage;
+      if (!resources[language][key] && this.defaultLanguage) language = this.defaultLanguage;
 
       var translatedValue = resources[language][key];
 

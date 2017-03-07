@@ -10,7 +10,6 @@
   <template>
     <iron-ajax
       id="glgCmLanguage"
-      auto
       with-credentials
       verbose
       method="get"
@@ -87,6 +86,10 @@
         type: 'String',
         value: null
       },
+      isImpersonator: {
+        type: Boolean,
+        value: false
+      },
       preferredLanguage: {
         type: 'String',
         value: function () {return window.localStorage.getItem("languagePreference")}
@@ -111,6 +114,7 @@
       ,'_setSelectedLanguage(preferredLanguage, browserLang, glgPersonLanguage, supportedLanguagesArray)'
     ],
     ready: function() {
+      if (!this.isImpersonator) this.$.glgCmLanguage.generateRequest();
       // try to load preferred language code from local storage
       this.browserLang = (window.navigator.userLanguage || window.navigator.language).split("-")[0];
     },

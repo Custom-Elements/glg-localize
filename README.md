@@ -8,8 +8,10 @@ client-side web application that is built atop
 ## Features
 * presents the user with a language selection GUI
 * automatically persists selection to the browser's local storage
-* automatically selects language to display based on previously selected
-preference else browser language header
+* automatically selects language to display based on
+  * 1. previously selected preference
+  * 1. language stored in dbo.person_language table
+  * 1. browser language header
 
 
 ## Styling
@@ -71,18 +73,30 @@ For example,
 ```
 
 ## Usage
+### supportedLanguages
+
 You should tell glg-localize which languages you wish to support
 using the `supportedLanguages` property.  This is a comma delimited
 string with pairs of values of the form language-code : language-display-name
+
+### defaultLanguage
+
+You can optionally provide an ISO language code to use by default if for
+some reason the language chosen does not have a translation
+
+### epiInstance
+
+If you want to default to a language stored in the dbo.person_language
+table, you need to tell glg-localize which epiquery/epistream instance
+to fetch it from.
 
 For example,
 
 ```html
   <glg-localize
+    default-language="en"
+    epi-instance="epistream-cm"
     supported-languages="en:English,es:Español,fr:Français,jp:日本語,ko:한국어,zh:中文（简体中文)"
   >
   </glg-localize>
 ```
-
-See additional documentation here on how to make the most of
-`Polymer.appLocalizeBehavior`: https://github.com/PolymerElements/app-localize-behavior
