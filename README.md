@@ -96,7 +96,7 @@ For example,
   <glg-localize
     default-language="en"
     epi-instance="epistream-cm"
-    supported-languages="en:English,es:Español,fr:Français,jp:日本語,ko:한국어,zh:中文（简体中文)"
+    supported-languages="en:English,es:Español,fr:Français,ja:日本語,ko:한국어,zh:中文（简体中文)"
   >
   </glg-localize>
 ```
